@@ -45,6 +45,10 @@ export interface TopBarProps {
      * C4のカウントダウンタイマー.
      */
     c4Timer: PercentageTimerProps;
+    /**
+     * C4の解除カウントダウンタイマー.
+     */
+    defuseTimer: PercentageTimerProps;
 }
 /**
  * TopBarコンポーネント
@@ -54,7 +58,12 @@ export class TopBar extends BaseComponent<TopBarProps, {}> {
 
     private createRoundInfo = (): JSX.Element => {
         const timer = ((): JSX.Element | null => {
-            if (this.props.currentPhase === CurrentPhase.bomb) {
+            if (this.props.currentPhase === CurrentPhase.bomb
+                || this.props.currentPhase === CurrentPhase.defuse) {
+                if (!this.props.c4Timer) {
+                    return null;
+                }
+
                 const props: PercentageTimerProps = {
                     ...this.props.c4Timer,
                     icon: this.props.c4Timer.icon ? {
@@ -63,10 +72,27 @@ export class TopBar extends BaseComponent<TopBarProps, {}> {
                     } : null,
                 };
                 return <PercentageTimer {...props} />;
-            } else if (this.props.currentPhase === CurrentPhase.defuse) {
-                return null;
             } else {
                 return <Timer {...this.props.roundTimer} className={classNames.timer} />;
+            }
+        })();
+        const defuseTimer = (() => {
+            if (this.props.currentPhase === CurrentPhase.defuse) {
+                if (!this.props.defuseTimer) {
+                    return null;
+                }
+                const props: PercentageTimerProps = {
+                    ...this.props.defuseTimer,
+                    className: classNames.defuseTimer,
+                };
+                return (
+                    <div className={classNames.defuseTimerWrapper}>
+                        <p className={classNames.defuseTimerLabel}>DEFUSING</p>
+                        <PercentageTimer {...props} />
+                    </div>
+                );
+            } else {
+                return null;
             }
         })();
         const roundCounter = (() => {
@@ -81,6 +107,7 @@ export class TopBar extends BaseComponent<TopBarProps, {}> {
             <div className={classNames.roundInfo}>
                 {timer}
                 {roundCounter}
+                {defuseTimer}
             </div>
         );
     };

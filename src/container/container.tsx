@@ -10,9 +10,11 @@ import { TeamMoneyState } from "../redux/modules/teamMoney/teamMoney";
 import { ScoreState } from "../redux/modules/score/score";
 import { TeamInfoState } from "../redux/modules/teamInfo/teamInfo";
 import { PlayerInfo } from "../config/playerInfo";
-import RoundPhase = GameStateIntegration.RoundPhase;
 import CurrentPhase = GameStateIntegration.CurrentPhase;
 import { BlinkingC4Icon } from "../views/blinkingC4Icon/BlinkingC4Icon";
+import { ProgressBarAxis, ProgressBarDirection } from "../views/percentageTimer/PercentageTimer";
+import { DefuseType } from "../redux/modules/defuseType/defuseType";
+import { RoundWinnerState } from "../redux/modules/roundWinner/roundWinner";
 
 export interface ContainerProps {
 
@@ -24,6 +26,8 @@ interface PropsFromState {
     spectatingPlayer: Player & PlayerInfo;
     score: ScoreState;
     teamInfo: TeamInfoState;
+    defuseType: DefuseType;
+    roundWinner: RoundWinnerState;
 }
 interface Dispatcher {
 
@@ -114,14 +118,29 @@ class ContainerPage extends React.Component<Props, ContainerState> {
                     currentRound: this.props.score.ct + this.props.score.t + 1,
                     maxRound: 30,
                 },
-                c4Timer: this.props.roundPhase.phase === CurrentPhase.bomb ? {
-                    value: this.props.roundPhase.time,
-                    max: 40, // C4 が爆発するまでの時間
-                    icon: {
-                        component: BlinkingC4Icon,
-                        props: {
-                            visible: true,
+                c4Timer: this.props.roundPhase.phase === CurrentPhase.bomb
+                    || this.props.roundPhase.phase === CurrentPhase.defuse ? {
+                        value: this.props.roundPhase.c4Timer,
+                        max: 40, // C4 が爆発するまでの時間
+                        icon: {
+                            component: BlinkingC4Icon,
+                            props: {
+                                visible: true,
+                            },
                         },
+                        progressBarType: {
+                            axis: ProgressBarAxis.Vertical,
+                            direction: ProgressBarDirection.Fill,
+                        },
+                    } : null,
+                defuseTimer: this.props.defuseType !== DefuseType.None ? {
+                    value: this.props.roundPhase.time,
+                    max: this.props.defuseType === DefuseType.DefuseWithDefuseKit
+                        ? 5
+                        : 10,
+                    progressBarType: {
+                        axis: ProgressBarAxis.Horizontal,
+                        direction: ProgressBarDirection.Empty,
                     },
                 } : null,
                 roundTimer: {
@@ -129,6 +148,10 @@ class ContainerPage extends React.Component<Props, ContainerState> {
                 },
                 currentPhase: this.props.roundPhase.phase,
             },
+            winnerTeamAnnounce: this.props.roundWinner.team !== null ? {
+                team: this.props.roundWinner.team,
+                teamName: this.props.roundWinner.teamName,
+            } : null,
         };
     }
     render() {
@@ -147,6 +170,8 @@ const mapStateToProps = (state: State): PropsFromState => {
         spectatingPlayer: state.spectatingPlayer.player,
         score: state.score,
         teamInfo: state.teamInfo,
+        defuseType: state.defuseType.defuseType,
+        roundWinner: state.roundWinner,
     };
 };
 export const Container = compose(
