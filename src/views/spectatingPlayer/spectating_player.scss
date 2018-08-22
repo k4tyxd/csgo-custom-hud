@@ -73,10 +73,10 @@ $spectating-box-height: 70px;
   padding-left: 36px;
   overflow: hidden;
   &[data-team="T"] {
-    color: #c19511;
+    color: #DA8A31;
   }
   &[data-team="CT"] {
-    color: #5788a8;
+    color: #0092C9;
   }
 }
 
@@ -155,10 +155,10 @@ $spectating-box-height: 70px;
   box-sizing: border-box;
   position: relative;
   &[data-team="T"] {
-    background: linear-gradient(to left, rgba(193,149,17,0), rgba(193,149,17,1));
+    background: linear-gradient(to left, rgba(193,149,17,0), rgba(218,138,49,1));
   }
   &[data-team="CT"] {
-    background: linear-gradient(to left, rgba(87,136,168,0), rgba(87,136,168,1));
+    background: linear-gradient(to left, rgba(87,136,168,0), rgba(0,146,201,1));
   }
 }
 
@@ -208,9 +208,9 @@ $spectating-box-height: 70px;
   height: 120px;
   box-sizing: border-box;
   &[data-team="T"] {
-    border: 3px #c19511 solid;
+    border: 3px #DA8A31 solid;
   }
   &[data-team="CT"] {
-    border: 3px #5788a8 solid;
+    border: 3px #0092C9 solid;
   }
 }
